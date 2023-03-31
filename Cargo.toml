@@ -1,0 +1,19 @@
+[package]
+name = "wasm-bundle"
+version = "0.1.0"
+authors = ["Florian Uekermann <florian@uekermann.me>"]
+description = "Compile Rust code to self-contained `.js` and `.html` files using WASM."
+license = "Apache-2.0 OR MIT"
+repository = "https://github.com/CodeGreenGmbH/wasm-bundle"
+categories = ["development-tools::cargo-plugins", "wasm", "web-programming"]
+edition = "2021"
+
+[[bin]]
+name = "cargo-wasm-bundle"
+path = "src/bin/cargo-wasm-bundle.rs"
+
+[dependencies]
+base64 = "0.21.0"
+cargo-lock = "8.0.3"
+cargo_metadata = "0.15.3"
+clap = { version = "4.2.1", features = ["derive"] }
