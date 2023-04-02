@@ -5,7 +5,7 @@ use std::time::Duration;
 use wasm_bindgen::{closure::Closure, JsCast};
 use web_sys::{HtmlButtonElement, HtmlParagraphElement};
 
-pub fn main() {
+fn main() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     wasm_logger::init(wasm_logger::Config::new(log::Level::Info));
     wasm_bindgen_futures::spawn_local(run())

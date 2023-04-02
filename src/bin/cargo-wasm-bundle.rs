@@ -5,5 +5,5 @@ use wasm_bundle::{exec, Cli};
 
 fn main() {
     let Cli::WasmBundle(opt) = Cli::parse();
-    exec(Path::new("."),opt);
+    exec(Path::new("."), &opt);
 }

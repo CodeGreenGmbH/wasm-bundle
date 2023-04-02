@@ -1,6 +1,6 @@
 [package]
 name = "wasm-bundle"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Florian Uekermann <florian@uekermann.me>"]
 description = "Compile Rust code to self-contained `.js` and `.html` files using WASM."
 license = "Apache-2.0 OR MIT"
