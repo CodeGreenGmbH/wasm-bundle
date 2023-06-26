@@ -26,18 +26,19 @@ pub struct Opt {
 #[derive(Parser, Debug)]
 #[clap(bin_name = "cargo")]
 pub enum Cli {
-    /// A cargo subcommand for generating flamegraphs, using inferno
+    /// compile to self-contained `.js` and `.html` files using WASM
     #[clap(version)]
     WasmBundle(Opt),
 }
 
 pub fn exec(base_dir: &Path, opt: &Opt) {
+    let base_dir = std::fs::canonicalize(base_dir).unwrap();
     let target_profile = match opt.release {
         true => "release",
         false => "debug",
     };
     let cargo_meta = cargo_metadata::MetadataCommand::new()
-        .current_dir(base_dir)
+        .current_dir(base_dir.clone())
         .no_deps()
         .exec()
         .unwrap();
@@ -56,7 +57,18 @@ pub fn exec(base_dir: &Path, opt: &Opt) {
         .as_std_path()
         .join("wasm-bundle")
         .join(target_profile);
-    let mut name = &cargo_meta.root_package().unwrap().name;
+
+    let mut name = None;
+    for package in cargo_meta.workspace_packages() {
+        let manifest_path = package.manifest_path.clone().into_std_path_buf();
+        let manifest_path = std::fs::canonicalize(manifest_path).unwrap();
+        let manifest_dir = manifest_path.parent().unwrap();
+        if manifest_dir == base_dir {
+            name = Some(&package.name);
+        }
+    }
+
+    let mut name = name.expect("cargo wasm-bundle must be executed in a package root");
 
     if let Some(example) = &opt.example {
         name = example;
@@ -67,10 +79,10 @@ pub fn exec(base_dir: &Path, opt: &Opt) {
 
     create_dir_all(&html_target_dir).unwrap();
 
-    cargo_build(base_dir, &opt);
-    check_wasm_bindgen(base_dir);
+    cargo_build(&base_dir, &opt);
+    check_wasm_bindgen(&base_dir);
     wasm_bindgen(
-        base_dir,
+        &base_dir,
         &cargo_build_target_dir,
         &name,
         &wasm_bindgen_target_dir,

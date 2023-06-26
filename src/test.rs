@@ -10,7 +10,11 @@ fn bundle_example(workspace: Option<&str>, crate_name: &str, opt: Opt) {
     base_dir = base_dir.join(crate_name);
     cargo_clean(&base_dir);
     exec(&base_dir, &opt);
-    let mut html_path = base_dir.join("target/wasm-bundle/debug");
+    let mut html_path = base_dir.clone();
+    if workspace.is_some() {
+        html_path = html_path.parent().unwrap().to_path_buf();
+    }
+    html_path = html_path.join("target/wasm-bundle/debug");
     if let Some(example) = &opt.example {
         html_path = html_path.join("examples").join(format!("{example}.html"));
     } else {

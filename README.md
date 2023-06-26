@@ -66,7 +66,6 @@ Untested / doesn't work:
 - Library targets
 - Additional binary targets
 - Customized binary targets are not tested
-- Workspaces
 
 If you need additional functionality consider opening an issue on GitHub and maybe contribute a matching example crate layout.
 
