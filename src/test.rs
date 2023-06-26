@@ -2,8 +2,12 @@ use std::{env::var, fs, path::Path, process::Command};
 
 use crate::{exec, run, Opt};
 
-fn bundle_example(crate_name: &str, opt: Opt) {
-    let base_dir = Path::new("examples").join(crate_name);
+fn bundle_example(workspace: Option<&str>, crate_name: &str, opt: Opt) {
+    let mut base_dir = Path::new("examples").to_path_buf();
+    if let Some(workspace) = workspace {
+        base_dir = base_dir.join(workspace);
+    }
+    base_dir = base_dir.join(crate_name);
     cargo_clean(&base_dir);
     exec(&base_dir, &opt);
     let mut html_path = base_dir.join("target/wasm-bundle/debug");
@@ -23,17 +27,22 @@ fn cargo_clean(base_dir: &Path) {
 
 #[test]
 fn wasm_counter() {
-    bundle_example("wasm-counter", Opt::default())
+    bundle_example(None, "wasm-counter", Opt::default())
 }
 
 #[test]
 fn yew_counter() {
-    bundle_example("yew-counter", Opt::default())
+    bundle_example(None, "yew-counter", Opt::default())
 }
 
 #[test]
 fn library() {
     let mut opt = Opt::default();
     opt.example = Some("demo".to_string());
-    bundle_example("library", opt)
+    bundle_example(None, "library", opt)
+}
+
+#[test]
+fn workspace() {
+    bundle_example(Some("workspace"), "wasm-counter", Opt::default())
 }
